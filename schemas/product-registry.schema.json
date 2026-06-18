@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faraday-capital-systems.github.io/faraday-governance/schemas/product-registry.schema.json",
+  "title": "Faraday Product Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "products"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "org",
+          "repo",
+          "tier",
+          "risk_class",
+          "owner",
+          "governance_version",
+          "status",
+          "evidence_path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "org": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9-]*$"
+          },
+          "repo": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]+$"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "platform",
+              "product",
+              "research"
+            ]
+          },
+          "risk_class": {
+            "type": "string",
+            "enum": [
+              "public",
+              "internal",
+              "confidential",
+              "regulated"
+            ]
+          },
+          "owner": {
+            "type": "string",
+            "pattern": "^@.+"
+          },
+          "governance_version": {
+            "type": "string",
+            "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "onboarding",
+              "active",
+              "deprecated"
+            ]
+          },
+          "evidence_path": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+version: 1
+roles:
+  - id: founder
+    description: Final governance authority for release, risk, and override decisions.
+  - id: security_owner
+    description: Owns governance definitions, security gates, and review requirements.
+  - id: product_owner
+    description: Owns product implementation and product-side evidence.
+  - id: operator
+    description: Operates approved workflows under defined controls.
+  - id: auditor
+    description: Reviews evidence and control outcomes without changing definitions.

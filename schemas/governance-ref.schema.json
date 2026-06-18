@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faraday-capital-systems.github.io/faraday-governance/schemas/governance-ref.schema.json",
+  "title": "Faraday Governance Reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "governance"
+  ],
+  "properties": {
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inherits_from",
+        "version",
+        "bundle_sha256",
+        "controlled_by",
+        "enforced_in",
+        "enforcement",
+        "evidence_lives_in"
+      ],
+      "properties": {
+        "inherits_from": {
+          "type": "string",
+          "const": "faraday-capital-systems/faraday-governance"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v\\d+\\.\\d+\\.\\d+$"
+        },
+        "bundle_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "controlled_by": {
+          "type": "string",
+          "const": "shield"
+        },
+        "enforced_in": {
+          "type": "string",
+          "const": "orbit"
+        },
+        "enforcement": {
+          "type": "string",
+          "const": "fail_closed"
+        },
+        "evidence_lives_in": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

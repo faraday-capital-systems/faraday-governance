@@ -1,0 +1,10 @@
+version: 1
+labels:
+  - id: public
+    description: Approved for public distribution.
+  - id: internal
+    description: Internal Faraday operational information.
+  - id: confidential
+    description: Sensitive business, security, or product information.
+  - id: regulated
+    description: Payroll, compliance, legal, tax, finance, or other regulated information.

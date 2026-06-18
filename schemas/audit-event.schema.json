@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faraday-capital-systems.github.io/faraday-governance/schemas/audit-event.schema.json",
+  "title": "Faraday Audit Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "ts",
+    "actor",
+    "product",
+    "event_type",
+    "source",
+    "payload_sha256"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ts": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 1
+    },
+    "product": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "governance_reference_added",
+        "governance_reference_updated",
+        "governance_validation_passed",
+        "governance_validation_failed",
+        "promotion_requested",
+        "promotion_approved",
+        "promotion_rejected",
+        "deployment_requested",
+        "deployment_approved",
+        "deployment_blocked",
+        "policy_bundle_loaded",
+        "policy_bundle_rejected",
+        "policy_evaluation_allowed",
+        "policy_evaluation_review_required",
+        "policy_evaluation_blocked",
+        "human_approval_requested",
+        "human_approval_granted",
+        "human_approval_denied",
+        "evidence_recorded"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "mission_id": {
+      "type": "string"
+    },
+    "approval_id": {
+      "type": "string"
+    },
+    "payload_ref": {
+      "type": "string"
+    }
+  }
+}

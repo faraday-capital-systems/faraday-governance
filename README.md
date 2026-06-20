@@ -8,3 +8,5 @@ and operating templates.
 This repo does not hold instance data, customer records, evidence, runtime engine
 code, or secrets. Products pin released tags and verify the bundle digest before
 using these definitions.
+
+CI baseline marker.

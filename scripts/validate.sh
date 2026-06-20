@@ -10,7 +10,7 @@ if ! command -v ajv >/dev/null 2>&1; then
   exit 1
 fi
 
-tmp="$(mktemp)"
+tmp="$(mktemp --suffix=.json)"
+trap 'rm -f "$tmp"' EXIT
 yq -o=json '.' products/registry.yml > "$tmp"
 ajv validate --spec=draft2020 -s schemas/product-registry.schema.json -d "$tmp"
-rm -f "$tmp"

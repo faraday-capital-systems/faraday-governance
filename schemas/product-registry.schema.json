@@ -77,6 +77,13 @@
               "deprecated"
             ]
           },
+          "enforcement": {
+            "type": "string",
+            "enum": [
+              "enforced",
+              "advisory"
+            ]
+          },
           "evidence_path": {
             "type": "string",
             "minLength": 1

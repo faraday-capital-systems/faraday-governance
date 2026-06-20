@@ -1,12 +1,57 @@
+# Authoritative list of governed products (federated: org + repo per entry).
+# status: onboarding | active | deferred | deprecated
+# enforcement: enforced (branch protection requires validate, blocks merge) |
+#              advisory (validate runs and reports on every PR, but the repo's plan
+#                        cannot apply branch protection so it cannot block — accepted
+#                        interim state; re-apply when org upgrades to Team or repo
+#                        goes public). Absent => enforced.
 version: 1
 products:
-  - { id: pse,        org: tomrivera-PSE,    repo: "PSE--Projects", tier: product,  risk_class: regulated,    owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }
-  - { id: orbit,      org: orbitconsole,     repo: orbit-console,   tier: product,  risk_class: internal,     owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }
-  - { id: founder-pm, org: faraday-build,    repo: founder-pm,      tier: product,  risk_class: internal,     owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }
+  - id: pse
+    org: tomrivera-PSE
+    repo: PSE--Projects
+    tier: product
+    risk_class: regulated
+    owner: "@tomrivera-PSE"
+    governance_version: v1.0.0
+    status: active
+    enforcement: enforced
+    evidence_path: "./.faraday/evidence/"
+
+  - id: orbit
+    org: orbitconsole
+    repo: orbit-console
+    tier: product
+    risk_class: internal
+    owner: "@tomrivera-PSE"
+    governance_version: v1.0.0
+    status: active
+    enforcement: advisory      # Free-plan private repo; protection 403. Re-apply on upgrade/public.
+    evidence_path: "./.faraday/evidence/"
+
+  - id: founder-pm
+    org: faraday-build
+    repo: founder-pm
+    tier: product
+    risk_class: internal
+    owner: "@tomrivera-PSE"
+    governance_version: v1.0.0
+    status: active
+    enforcement: advisory      # Free-plan private repo; protection 403. Re-apply on upgrade/public.
+    evidence_path: "./.faraday/evidence/"
+
   # PLACEHOLDER — registered so the federation roster is complete, but NOT enforced.
   # shield-ai is the EVALUATION authority and is being built independently in its own
   # repo. Onboarding (pin governance, vendor the canonical audit schema, ADR-0009,
   # governance-validate) is owned by the shield-ai repo when it is ready to consume
   # governance — it is NOT driven from this workspace. Flip to active only after
   # shield-ai has merged its own onboarding.
-  - { id: shield,     org: faraday-platform, repo: shield-ai,       tier: platform, risk_class: confidential, owner: "@tomrivera-PSE", governance_version: v1.0.0, status: deferred, evidence_path: "./.faraday/evidence/" }
+  - id: shield
+    org: faraday-platform
+    repo: shield-ai
+    tier: platform
+    risk_class: confidential
+    owner: "@tomrivera-PSE"
+    governance_version: v1.0.0
+    status: deferred
+    evidence_path: "./.faraday/evidence/"

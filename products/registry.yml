@@ -3,4 +3,4 @@ products:
   - { id: pse,        org: tomrivera-PSE,    repo: "PSE--Projects", tier: product,  risk_class: regulated,    owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }
   - { id: orbit,      org: orbitconsole,     repo: orbit-console,   tier: product,  risk_class: internal,     owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }
   - { id: shield,     org: faraday-platform, repo: shield-ai,       tier: platform, risk_class: confidential, owner: "@tomrivera-PSE", governance_version: v1.0.0, status: onboarding, evidence_path: "./.faraday/evidence/" }
-  - { id: founder-pm, org: faraday-build,    repo: founder-pm,      tier: product,  risk_class: internal,     owner: "@tomrivera-PSE", governance_version: v1.0.0, status: onboarding, evidence_path: "./.faraday/evidence/" }
+  - { id: founder-pm, org: faraday-build,    repo: founder-pm,      tier: product,  risk_class: internal,     owner: "@tomrivera-PSE", governance_version: v1.0.0, status: active, evidence_path: "./.faraday/evidence/" }

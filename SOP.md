@@ -83,6 +83,12 @@ checks fail closed. Investigate the tag, do not loosen the check.
    refs do not resolve).
 4. Open a governance PR adding the product to `products/registry.yml`
    (org, repo, tier, risk_class, owner, governance_version, status: `onboarding`).
+   A product's `governance-validate` reads `registry.yml` **from its pinned tag**, not
+   from `main`. A product may only pin a governance tag that already contains its own
+   registry entry. If the current release tag predates the product's registry entry, cut
+   a new release (SOP-C) **after** merging the registry entry, and pin the product to
+   that tag. Registry edits on `main` alone are not visible to a product pinning an
+   older tag.
 5. Open the product PR; confirm `validate` is green; all commits signed/verified.
 6. Merge the product PR. Then flip the registry entry `onboarding -> active`.
 7. Apply product branch protection: require the `validate` check, required_signatures,

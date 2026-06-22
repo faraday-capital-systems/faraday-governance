@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://faraday-capital-systems.github.io/faraday-governance/schemas/fil-policy.schema.json",
+  "title": "Faraday Intelligence Ledger Policy Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "policies"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "policies": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "policy_name",
+          "event_type",
+          "scope_type",
+          "threshold_value",
+          "action",
+          "active"
+        ],
+        "properties": {
+          "policy_name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Unique identifier for the policy; matches fil_governance_policies.policy_name."
+          },
+          "event_type": {
+            "type": "string",
+            "enum": [
+              "COST_THRESHOLD_BREACH",
+              "LOOP_DETECTION",
+              "CUMULATIVE_SPEND_ALERT",
+              "ZERO_TOKEN_SUCCESS"
+            ],
+            "description": "Governance event type this policy triggers."
+          },
+          "scope_type": {
+            "type": "string",
+            "enum": [
+              "global",
+              "product"
+            ],
+            "description": "Whether the policy applies globally or to a single product."
+          },
+          "scope_id": {
+            "type": ["string", "null"],
+            "description": "Product ID when scope_type is 'product'; null for global."
+          },
+          "threshold_value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Numeric threshold — USD for cost policies, call count for loop detection."
+          },
+          "window_seconds": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "Time window in seconds for rate-based policies. Null for single-event policies."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "alert",
+              "warn",
+              "block"
+            ],
+            "description": "Response action: alert/warn write a governance event; block escalates to critical severity."
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether this policy is enforced. Inactive policies are retained for audit history."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Human-readable explanation of the policy's purpose."
+          }
+        }
+      }
+    }
+  }
+}

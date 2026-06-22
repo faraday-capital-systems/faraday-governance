@@ -1,0 +1,65 @@
+# Faraday Intelligence Ledger — governance policy definitions.
+#
+# These definitions are the authority for FIL governance policies.
+# The FIL service seeds fil_governance_policies from these values.
+# Schema: schemas/fil-policy.schema.json
+#
+# Scope: definitions only — no instance data, evidence, or engine code.
+# See GOVERNANCE-SOP.md for operating principles.
+
+version: 1
+policies:
+  # ── Global policies (apply to all products) ──────────────────────
+
+  - policy_name: global_single_event_cost_cap
+    event_type: COST_THRESHOLD_BREACH
+    scope_type: global
+    scope_id: null
+    threshold_value: 1.00
+    window_seconds: null
+    action: alert
+    active: true
+    notes: >-
+      Flag any single LLM call costing more than $1.00.
+      Catches runaway prompts or unexpectedly expensive model usage.
+
+  - policy_name: global_loop_detection
+    event_type: LOOP_DETECTION
+    scope_type: global
+    scope_id: null
+    threshold_value: 20
+    window_seconds: 60
+    action: warn
+    active: true
+    notes: >-
+      Warn when any agent+workflow pair exceeds 20 calls within
+      a 60-second window. Indicates a possible retry loop.
+
+  # ── Product-scoped policies ──────────────────────────────────────
+
+  - policy_name: pse_daily_spend_cap
+    event_type: CUMULATIVE_SPEND_ALERT
+    scope_type: product
+    scope_id: pse
+    threshold_value: 50.00
+    window_seconds: 86400
+    action: alert
+    active: true
+    notes: >-
+      Alert when PSE product cumulative spend exceeds $50 in a
+      24-hour window. PSE handles regulated payroll data — cost
+      anomalies may indicate misuse or a stuck workflow.
+
+  - policy_name: pulse_loop_guard
+    event_type: LOOP_DETECTION
+    scope_type: product
+    scope_id: pulse
+    threshold_value: 15
+    window_seconds: 300
+    action: block
+    active: true
+    notes: >-
+      Hard block when any Pulse agent+workflow pair exceeds 15 calls
+      within 5 minutes. Pulse's high-frequency pattern requires a
+      tighter circuit breaker than the global default. Action 'block'
+      escalates to critical severity for Phase 2 shield-ai integration.

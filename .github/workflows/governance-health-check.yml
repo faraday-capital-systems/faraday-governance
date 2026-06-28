@@ -1,0 +1,114 @@
+name: Governance Health Check
+
+on:
+  schedule:
+    - cron: '0 12 * * 1'  # Weekly Monday noon UTC
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Verify pinned contract
+        run: |
+          tag_sha=$(git rev-parse v1.0.0 2>/dev/null || echo "MISSING")
+          expected_sha="ac753335b7aac4f9ba8b79067338dab38448cd98"
+          if [ "$tag_sha" != "$expected_sha" ]; then
+            echo "::error::v1.0.0 tag SHA mismatch: got $tag_sha, expected $expected_sha"
+            exit 1
+          fi
+          digest=$(git archive v1.0.0 | sha256sum | awk '{print $1}')
+          expected_digest="b086ae5d06f8e0d3211769d7efdcc66f4445b2edffa9789c0896386f421fdc5d"
+          if [ "$digest" != "$expected_digest" ]; then
+            echo "::error::v1.0.0 bundle digest mismatch: got $digest"
+            exit 1
+          fi
+          echo "v1.0.0 = $tag_sha (correct)"
+          echo "digest = $digest (correct)"
+
+      - name: Check advisory products for upgrade eligibility
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Read advisory products from registry
+          products=$(yq -o=json '.products[] | select(.enforcement == "advisory")' products/registry.yml)
+
+          if [ -z "$products" ]; then
+            echo "No advisory products in registry."
+            exit 0
+          fi
+
+          echo "$products" | jq -c '.' | while read -r product; do
+            org=$(echo "$product" | jq -r '.org')
+            repo=$(echo "$product" | jq -r '.repo')
+            id=$(echo "$product" | jq -r '.id')
+
+            echo ""
+            echo "--- $id ($org/$repo) ---"
+
+            # Check org plan
+            plan=$(gh api "orgs/$org" --jq '.plan.name' 2>/dev/null || echo "DENIED")
+            echo "  org plan: $plan"
+
+            # Check repo visibility
+            visibility=$(gh api "repos/$org/$repo" --jq '.visibility' 2>/dev/null || echo "DENIED")
+            echo "  visibility: $visibility"
+
+            if [ "$plan" != "free" ] && [ "$plan" != "DENIED" ]; then
+              echo "::warning::$id ($org/$repo): org plan is '$plan' (not free) — branch protection may now be applicable. Run SOP-A step 7 to re-apply."
+            fi
+
+            if [ "$visibility" = "public" ]; then
+              echo "::warning::$id ($org/$repo): repo is public — branch protection is applicable. Run SOP-A step 7 to re-apply."
+            fi
+          done
+
+          echo ""
+          echo "Health check complete."
+
+      - name: Check active product governance workflows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Check each active product's most recent governance-validate run
+          products=$(yq -o=json '.products[] | select(.status == "active")' products/registry.yml)
+
+          echo "$products" | jq -c '.' | while read -r product; do
+            org=$(echo "$product" | jq -r '.org')
+            repo=$(echo "$product" | jq -r '.repo')
+            id=$(echo "$product" | jq -r '.id')
+
+            echo ""
+            echo "--- $id ($org/$repo) validate status ---"
+
+            # Get most recent governance-validate workflow run
+            result=$(gh api "repos/$org/$repo/actions/workflows/governance-validate.yml/runs" \
+              --jq '.workflow_runs[0] | "\(.conclusion) \(.updated_at)"' 2>/dev/null || echo "DENIED")
+
+            if [ "$result" = "DENIED" ]; then
+              echo "  Cannot read workflow runs (cross-org private repo, expected for advisory)."
+            elif [ -z "$result" ]; then
+              echo "::warning::$id ($org/$repo): no governance-validate runs found."
+            else
+              conclusion=$(echo "$result" | awk '{print $1}')
+              updated=$(echo "$result" | awk '{print $2}')
+              echo "  last run: $conclusion ($updated)"
+              if [ "$conclusion" = "failure" ]; then
+                echo "::warning::$id ($org/$repo): last governance-validate run FAILED ($updated)."
+              fi
+            fi
+          done
+
+          echo ""
+          echo "Workflow status check complete."

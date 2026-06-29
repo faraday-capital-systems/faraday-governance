@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # Full history needed for v1.0.0 tag + git archive
 
       - name: Install yq
         run: |

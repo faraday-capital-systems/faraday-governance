@@ -185,6 +185,13 @@ Cause: Free-plan private repos can't apply protection/rulesets.
 Fix: decide per repo — upgrade org to Team, make repo public, or accept advisory;
 record `enforcement: advisory` in the registry. Advisory still requires signed PRs.
 
+**`git rev-parse v1.0.0` or `git archive` fails in a GitHub Actions workflow.**
+Cause: `actions/checkout` defaults to `depth=1` (shallow clone), which does not
+include tags. Any step that needs a tag (`git rev-parse <tag>`, `git archive <tag>`,
+bundle-hash verification) will fail with "unknown revision."
+Fix: set `fetch-depth: 0` on the checkout step so the full history and all tags are
+available. Do not use `fetch-tags: true` alone — it is insufficient without depth.
+
 **SSH signing fails / `unknown_key` on verification.**
 Cause: agent not loaded in the shell, or the key isn't registered as a GitHub
 *Signing* key (Authentication-type doesn't count).

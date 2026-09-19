@@ -18,6 +18,21 @@ products:
     enforcement: enforced
     evidence_path: "./.faraday/evidence/"
 
+  # Transfer window: both owner rows are retained while tomrivera-PSE/PSE--Projects
+  # moves to payroll-synergy-experts/PSE--Projects. The owner-derived selector in the
+  # consumer resolves exactly one of these. The tomrivera-PSE row is removed by a later
+  # tag once the move is verified; see PSE-XFER-BASELINE-AMEND-01.
+  - id: pse-payroll-synergy-experts
+    org: payroll-synergy-experts
+    repo: PSE--Projects
+    tier: product
+    risk_class: regulated
+    owner: "@tomrivera-PSE"
+    governance_version: v1.0.0
+    status: active
+    enforcement: enforced
+    evidence_path: "./.faraday/evidence/"
+
   - id: orbit
     org: orbitconsole
     repo: orbit-console
